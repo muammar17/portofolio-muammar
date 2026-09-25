@@ -19,7 +19,18 @@ export default function Projects() {
         {projects.map((p, i) => {
           const hasDetails = Boolean(p.modules?.length || p.features?.length)
           const card = (
-            <article className="group flex h-full flex-col bg-[#f2f3f5] p-6 transition-colors dark:bg-ink-950 hover:bg-white dark:hover:bg-ink-900/60 sm:p-7">
+            <article className="group flex h-full flex-col bg-[#f2f3f5] transition-colors dark:bg-ink-950 hover:bg-white dark:hover:bg-ink-900/60">
+              {p.images?.[0] && (
+                <div className="relative h-44 overflow-hidden border-b border-ink-200/80 dark:border-ink-800/80">
+                  <img
+                    src={p.images[0].src}
+                    alt={p.images[0].alt}
+                    loading="lazy"
+                    className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
+                  />
+                </div>
+              )}
+              <div className="flex h-full flex-col p-6 sm:p-7">
               {/* Docket index + action */}
               <div className="flex items-start justify-between gap-4">
                 <span
@@ -79,6 +90,7 @@ export default function Projects() {
                     </span>
                   )}
                 </div>
+              </div>
               </div>
             </article>
           )

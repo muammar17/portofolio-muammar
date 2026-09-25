@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { Project } from '../data/profile'
 
 interface Props {
@@ -6,7 +6,12 @@ interface Props {
   onClose: () => void
 }
 
+type Tab = 'details' | 'screenshots'
+
 export default function ProjectModal({ project, onClose }: Props) {
+  const hasScreenshots = Boolean(project.images?.length)
+  const [tab, setTab] = useState<Tab>('details')
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -18,6 +23,11 @@ export default function ProjectModal({ project, onClose }: Props) {
       document.body.style.overflow = ''
     }
   }, [onClose])
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'details', label: 'Details' },
+    ...(hasScreenshots ? [{ id: 'screenshots' as Tab, label: `Screenshots (${project.images!.length})` }] : []),
+  ]
 
   return (
     <div
@@ -59,58 +69,105 @@ export default function ProjectModal({ project, onClose }: Props) {
               </span>
             ))}
           </div>
+
+          {/* Tab switcher */}
+          {tabs.length > 1 && (
+            <div role="tablist" aria-label={`${project.name} views`} className="mt-6 flex gap-1 rounded-md border border-ink-200/80 bg-ink-100/60 p-1 dark:border-ink-800/80 dark:bg-ink-950/60">
+              {tabs.map((t) => (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={tab === t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`focus-ring flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors sm:flex-none ${
+                    tab === t.id
+                      ? 'bg-white text-ink-950 shadow-sm dark:bg-ink-800 dark:text-ink-50'
+                      : 'text-ink-500 hover:text-ink-800 dark:text-ink-400 dark:hover:text-ink-100'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Body */}
         <div className="p-6 sm:p-8">
-          {project.modules && (
+          {tab === 'screenshots' && hasScreenshots && (
             <section>
-              <h4 className="meta text-ink-500 dark:text-ink-400">Modules</h4>
-              <div className="mt-4 grid gap-5 sm:grid-cols-2">
-                {project.modules.map((m) => (
-                  <div key={m.title} className="border-t border-ink-200/80 pt-4 dark:border-ink-800/80">
-                    <h5 className="font-display font-semibold text-ink-900 dark:text-ink-50">{m.title}</h5>
-                    <ul className="mt-2 space-y-1.5">
-                      {m.items.map((item) => (
-                        <li key={item} className="flex gap-2.5 text-sm text-ink-600 dark:text-ink-300">
-                          <span aria-hidden className="mt-[7px] h-1 w-3 shrink-0 bg-signal-500" />
-                          <span className="leading-relaxed">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              <div className="space-y-6">
+                {project.images!.map((img, i) => (
+                  <figure key={img.src}>
+                    <div className="max-h-[70vh] overflow-y-auto rounded-md border border-ink-200/80 bg-ink-50 dark:border-ink-800/80 dark:bg-ink-950">
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        className="w-full"
+                      />
+                    </div>
+                    <figcaption className="mt-2 text-xs text-ink-500 dark:text-ink-400">
+                      {String(i + 1).padStart(2, '0')} — {img.alt}
+                    </figcaption>
+                  </figure>
                 ))}
               </div>
             </section>
           )}
 
-          {project.features && (
-            <section className="mt-8">
-              <h4 className="meta text-ink-500 dark:text-ink-400">Technical Highlights</h4>
-              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {project.features.map((f) => (
-                  <li key={f} className="flex gap-2.5 text-sm text-ink-600 dark:text-ink-300">
-                    <span aria-hidden className="mt-[7px] h-1 w-3 shrink-0 bg-signal-500" />
-                    <span className="leading-relaxed">{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {tab === 'details' && (
+            <>
+              {project.modules && (
+                <section>
+                  <h4 className="meta text-ink-500 dark:text-ink-400">Modules</h4>
+                  <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                    {project.modules.map((m) => (
+                      <div key={m.title} className="border-t border-ink-200/80 pt-4 dark:border-ink-800/80">
+                        <h5 className="font-display font-semibold text-ink-900 dark:text-ink-50">{m.title}</h5>
+                        <ul className="mt-2 space-y-1.5">
+                          {m.items.map((item) => (
+                            <li key={item} className="flex gap-2.5 text-sm text-ink-600 dark:text-ink-300">
+                              <span aria-hidden className="mt-[7px] h-1 w-3 shrink-0 bg-signal-500" />
+                              <span className="leading-relaxed">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          <div className="mt-8 flex justify-end border-t border-ink-200/80 pt-6 dark:border-ink-800/80">
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-solid focus-ring"
-            >
-              Visit {project.name}
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </a>
-          </div>
+              {project.features && (
+                <section className="mt-8">
+                  <h4 className="meta text-ink-500 dark:text-ink-400">Technical Highlights</h4>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {project.features.map((f) => (
+                      <li key={f} className="flex gap-2.5 text-sm text-ink-600 dark:text-ink-300">
+                        <span aria-hidden className="mt-[7px] h-1 w-3 shrink-0 bg-signal-500" />
+                        <span className="leading-relaxed">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              <div className="mt-8 flex justify-end border-t border-ink-200/80 pt-6 dark:border-ink-800/80">
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-solid focus-ring"
+                >
+                  Visit {project.name}
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -41,8 +41,9 @@ export const experiences: Experience[] = [
       'Improved application performance and usability by implementing pagination, route-level code splitting, and component optimization, reducing UI-related issues and improving load time.',
       'Collaborated closely with backend engineers, UI/UX designers, and product teams in Agile (Scrum) development cycles.',
       'Provided technical guidance and code reviews for junior frontend developers to maintain code quality and best practices.',
+      'Contributed to iFleet (ifleetplus.id), a Next.js fleet management platform: implemented Google Authenticator two-factor authentication (QR-code setup, 6-digit OTP flow, profile security settings) and form validation.',
     ],
-    tools: ['React JS', 'Next JS', 'Redux Saga', 'Google Maps', 'Figma'],
+    tools: ['React JS', 'Next JS', 'Redux Toolkit', 'Redux Saga', 'Google Maps', 'Figma'],
   },
   {
     company: 'Smart IT Indonesia',
@@ -90,6 +91,8 @@ export interface Project {
   /** Optional deep-dive content rendered in a detail modal. */
   modules?: { title: string; items: string[] }[]
   features?: string[]
+  /** Optional screenshots (cover shown on the card, gallery in the modal). */
+  images?: { src: string; alt: string }[]
 }
 
 export const projects: Project[] = [
@@ -160,6 +163,12 @@ export const projects: Project[] = [
       'Token-based authentication with encrypted local storage and protected routes',
       'Multi-environment API support (staging/production) via centralized Axios client',
     ],
+    images: [
+      { src: 'tracking', alt: 'Real-time fleet tracking map with route polylines and geofences' },
+      { src: 'camera-cc-1', alt: 'Camera control center with multi-channel live feed grid' },
+      { src: 'camera-cc-2', alt: 'Camera control center view with device channel selector' },
+      { src: 'camera-live', alt: 'Live camera monitoring page with full-height feed scroll' },
+    ].map((img) => ({ ...img, src: `${import.meta.env.BASE_URL}projects/orin/${img.src}.webp` })),
   },
   {
     name: 'Admin ORIN Panel',
@@ -228,6 +237,18 @@ export const projects: Project[] = [
       'Reusable UI component library built on PrimeReact & styled-components',
       'Pagination, lazy loading, and component memoization for data-heavy tables',
     ],
+    images: [
+      { src: 'dashboard', alt: 'Operational dashboard with device and user analytics' },
+      { src: 'kanban-boards', alt: 'Kanban pipeline board for sales task management' },
+      { src: 'kanban-list-1', alt: 'Kanban list view with task cards' },
+      { src: 'kanban-list-2', alt: 'Kanban list view with drag-and-drop actions' },
+      { src: 'add-order', alt: 'Order creation form with multiple workflows' },
+      { src: 'orders-sales', alt: 'Orders and sales management table' },
+      { src: 'customer-address', alt: 'Customer address form' },
+      { src: 'device-raw-datas', alt: 'GPS device raw data inspection' },
+      { src: 'seller-dashboard', alt: 'Role-specific seller dashboard' },
+      { src: 'visit', alt: 'Field visitation workflow with geolocation forms' },
+    ].map((img) => ({ ...img, src: `${import.meta.env.BASE_URL}projects/admin-orin/${img.src}.webp` })),
   },
   {
     name: 'Seller ORIN Panel',
@@ -294,6 +315,10 @@ export const projects: Project[] = [
       'Interactive maps with google-map-react and charts with amCharts 5',
       'Toast notifications (react-toastify) and alert dialogs (sweetalert)',
     ],
+    images: [
+      { src: 'dashboard', alt: 'Seller dashboard with operational overview and device charts' },
+      { src: 'withdraw', alt: 'Withdrawal requests list with approval status workflow' },
+    ].map((img) => ({ ...img, src: `${import.meta.env.BASE_URL}projects/seller-orin/${img.src}.webp` })),
   },
   {
     name: 'TMS ZEND',
@@ -363,6 +388,12 @@ export const projects: Project[] = [
       'Rich text forms with draft-js / react-draft-wysiwyg and drag-and-drop with react-beautiful-dnd',
       'Google/Facebook login with reCAPTCHA, OneSignal notifications, and react-intl (i18n)',
     ],
+    images: [
+      { src: 'dashboard', alt: 'Operational dashboard with shipment charts and driver job recap' },
+      { src: 'bulk-jobs', alt: 'Bulk creation form for shipments, parcels, and jobs' },
+      { src: 'form-task-edit', alt: 'Task detail form with status workflow' },
+      { src: 'edit-expenses', alt: 'Driver expense editing form' },
+    ].map((img) => ({ ...img, src: `${import.meta.env.BASE_URL}projects/tms-zend/${img.src}.webp` })),
   },
   {
     name: 'FINDSTOCK',
@@ -420,6 +451,34 @@ export const projects: Project[] = [
       'SweetAlert dialogs and intro.js onboarding tour',
     ],
   },
+  {
+    name: 'iFleet',
+    description:
+      'Fleet management and GPS tracking platform (ifleetplus.id) built with Next.js — real-time vehicle monitoring, live camera streaming, and reports. Contributed to the authentication layer: Google Authenticator two-factor authentication (2FA) with QR-code setup, OTP input flow, and profile security settings, plus form validation.',
+    link: 'https://ifleetplus.id/',
+    tools: ['Next JS', 'React', 'Redux Toolkit', 'Ant Design', 'Tailwind CSS'],
+    gradient: 'from-rose-500 to-red-600',
+    modules: [
+      {
+        title: 'Authentication & Security (my contribution)',
+        items: [
+          'Google Authenticator 2FA setup flow with QR-code scanning and manual secret entry',
+          '6-digit OTP input with per-digit auto-advance, numeric validation, and auto-submit',
+          'OTP verification on login and 2FA enable/disable from profile security settings',
+          'Recovery codes presentation for account lockout prevention',
+          'Form validation across the authentication and profile flows',
+        ],
+      },
+    ],
+    features: [
+      'Platform stack: Next.js App Router with Redux Toolkit state management',
+      'Real-time fleet tracking over MQTT with React Leaflet & Google Maps',
+      'Enterprise UI with Ant Design, PrimeReact, and Tailwind CSS',
+    ],
+    images: [
+      { src: 'profile', alt: 'Profile page with Google Authenticator 2FA setup — QR code, OTP input, and recovery codes' },
+    ].map((img) => ({ ...img, src: `${import.meta.env.BASE_URL}projects/ifleet/${img.src}.webp` })),
+  },
 ]
 
 export interface Education {
@@ -459,7 +518,11 @@ export const skillGroups = [
   },
   {
     label: 'Maps, Charts & Documents',
-    skills: ['Google Maps API', 'React Leaflet', 'MQTT', 'amCharts', 'Chart.js', 'jsPDF', 'xlsx (Excel export)'],
+    skills: ['Google Maps API', 'React Leaflet', 'MQTT', 'amCharts', 'Chart.js', 'D3.js', 'jsPDF', 'xlsx (Excel export)'],
+  },
+  {
+    label: 'Authentication & Security',
+    skills: ['Google Authenticator 2FA (TOTP)', 'OTP flows', 'Form validation'],
   },
   {
     label: 'Architecture & API',
